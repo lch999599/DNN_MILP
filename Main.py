@@ -3,6 +3,7 @@ from supportingFunctions import *
 from sklearn.metrics import accuracy_score
 import numpy as np
 
+#hello i am a comment
 
 def main():
     # initialization
