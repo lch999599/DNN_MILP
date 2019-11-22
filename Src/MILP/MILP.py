@@ -1,9 +1,6 @@
 import random
 import gurobipy as grb
-import matplotlib
-import pandas as pd
-from mainReLU import *
-import numpy as np
+from Src.DNN.mainReLU import *
 
 params, cache = main()
 X_train, X_test, y_train, y_test, digits = importdata(55000)
