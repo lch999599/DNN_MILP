@@ -3,7 +3,6 @@ from supportingFunctions import *
 from sklearn.metrics import accuracy_score
 import numpy as np
 
-#hello i am a comment
 
 def main():
     # initialization
@@ -21,7 +20,7 @@ def main():
     params = {"W0": np.random.randn(n_h, n_x) * np.sqrt(1. / n_x),
               "b0": np.zeros((n_h, 1)) * np.sqrt(1. / n_x),
               "W1": np.random.randn(n_h, n_h) * np.sqrt(1. / n_h),
-              "b1": np.random.randn(n_h, 1) * np.sqrt(1. / n_h),
+              "b1": np.zeros((n_h, 1)) * np.sqrt(1. / n_h),
               "W2": np.random.randn(digits, n_h) * np.sqrt(1. / n_h),
               "b2": np.zeros((digits, 1)) * np.sqrt(1. / n_h)}
 
@@ -32,7 +31,7 @@ def main():
     V_dW2 = np.zeros(params["W2"].shape)
     V_db2 = np.zeros(params["b2"].shape)
 
-    m = 3
+    m = 9
     adversarials = False
 
     print("starting training...")
