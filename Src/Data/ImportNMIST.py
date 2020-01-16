@@ -1,35 +1,57 @@
 import numpy as np
 from sklearn.datasets import fetch_openml
-import matplotlib
-import matplotlib.pyplot as plt
 
-def importdata(train_size):
+# Module used for importing MNIST data.
+
+# Imports data from server. Run this function once to import images and labels once
+# Saves data then to numpy arrays and saves them locally.
+def importdata():
     mnist = fetch_openml('mnist_784')
     X, y = mnist["data"], mnist["target"]
+    # normalize pixel values
     X = X / 255.0
+    # correction for string labels
     y.astype(int)
 
     digits = 10
+
+    # reshape arrays
     examples = y.shape[0]
 
     y = y.reshape(1, examples)
 
     y_new = np.eye(digits)[y.astype('int32')]
-    y_new = y_new.T.reshape(digits, examples)
-    y = y_new
+    y = y_new.T.reshape(digits, examples)
 
-    m_test = X.shape[0] - train_size
+    # save arrays
+    np.save("X", X)
+    np.save("y", y)
+    np.save("digits", digits)
 
-    X_train, X_test = X[:train_size].T, X[train_size:].T
-    y_train, y_test = y_new[:, :train_size], y_new[:, train_size:]
+# function for loading in data from saved arrays.
+def loadData(train_size):
+    X, y, digits= np.load("X.npy").T, np.load("y.npy"), np.load("digits.npy")
 
-    shuffle_index = np.random.permutation(train_size)
-    X_train, y_train = X_train[:, shuffle_index], y_train[:, shuffle_index]
+    # shuffle data
+    shuffle_index = np.random.permutation(X.shape[1])
+    X, y = X[:, shuffle_index], y[:, shuffle_index]
+
+    # uncomment this line below for truly random sample
+    # comment lines below
+    # X_train, y_train = X[:,:train_size], y[:, :train_size]
+
+    # take sample with all digits taken in an equal amount
+    X_test, y_test = X[:,train_size:], y[:, train_size:]
+    X_train, y_train = np.zeros((784, train_size)), np.zeros((10, train_size))
+    averages = train_size*0.1*np.ones((10,1))
+    index, count = 0, 0
+    while(count<train_size):
+        if averages[np.argmax(y[:,index])] > 0:
+            averages[np.argmax(y[:,index])] -= 1
+            X_train[:,count], y_train[:,count] = X[:,index], y[:,index]
+            count += 1
+        index += 1
 
     return X_train, X_test, y_train, y_test, digits
 
-def addNoiseAdversarials(X, y):
-    new = (1/255) * np.random.randint(low=-35, high=35, size=X.shape)
-    X = np.hstack((X, X+new))
-    y = np.hstack((y, y))
-    return X, y
+importdata()
